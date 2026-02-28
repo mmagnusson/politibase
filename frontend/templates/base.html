@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Politibase{% endblock %} — Local Election Research</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <header class="header">
+        <div class="header-inner">
+            <h1><a href="/" style="color:white;text-decoration:none">Politibase</a> <span>FM Metro</span></h1>
+            <nav>
+                <a href="/">Ballot Lookup</a>
+                <a href="/candidates">Candidates</a>
+                <a href="/elections">Elections</a>
+                <a href="/jurisdictions">Jurisdictions</a>
+                <a href="/about">About</a>
+            </nav>
+        </div>
+    </header>
+
+    {% block hero %}{% endblock %}
+
+    <main class="container">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer">
+        <p>Politibase &mdash; Open-source local election candidate research.</p>
+        <p>Data sourced from official government websites and public records. <a href="https://github.com/mmagnusson/politibase">GitHub</a></p>
+        <p style="margin-top:0.5rem;font-size:0.8rem">All data is provided as-is from public sources. Verify with your local election office.</p>
+    </footer>
+
+    <script src="/static/js/app.js"></script>
+</body>
+</html>

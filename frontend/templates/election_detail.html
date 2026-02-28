@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}{{ election.office_title }} — {{ election.election_date }}{% endblock %}
+
+{% block content %}
+<div class="section-header">
+    <h2>{{ election.office_title }}</h2>
+</div>
+
+<div class="detail-section">
+    <p><strong>Election Date:</strong> {{ election.election_date }}</p>
+    <p><strong>Type:</strong> {{ election.election_type }}</p>
+    {% if election.filing_deadline %}<p><strong>Filing Deadline:</strong> {{ election.filing_deadline }}</p>{% endif %}
+    {% if election.description %}<p>{{ election.description }}</p>{% endif %}
+</div>
+
+<div class="section-header">
+    <h2>Candidates</h2>
+</div>
+
+{% if election.candidates %}
+<div class="card-grid">
+    {% for c in election.candidates %}
+    <div class="card">
+        <h3><a href="/candidate/{{ c.id }}">{{ c.full_name }}</a></h3>
+        {% if c.occupation %}<div class="subtitle">{{ c.occupation }}</div>{% endif %}
+        <div>
+            <span class="badge badge-{{ c.status }}">{{ c.status }}</span>
+            {% if c.is_incumbent %}<span class="badge badge-incumbent">Incumbent</span>{% endif %}
+        </div>
+        {% if c.votes_received %}
+        <div class="subtitle" style="margin-top:0.5rem">Votes: {{ c.votes_received }} ({{ c.vote_percentage }}%)</div>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<p class="subtitle">No candidates on record for this election.</p>
+{% endif %}
+
+<div style="margin-top:1rem">
+    <a href="/elections">&larr; Back to all elections</a>
+</div>
+{% endblock %}

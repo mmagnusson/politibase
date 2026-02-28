@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}About{% endblock %}
+
+{% block content %}
+<div class="section-header">
+    <h2>About Politibase</h2>
+</div>
+
+<div class="detail-section">
+    <h3>Mission</h3>
+    <p class="bio">
+        Politibase provides an easy-to-use repository of political candidate information for local elections
+        that would otherwise receive little coverage or interest, but which have a disproportionate impact
+        relative to their coverage.
+    </p>
+    <p class="bio" style="margin-top:0.75rem">
+        School boards decide what your children learn. City councils decide how your tax dollars are spent.
+        County commissions manage everything from public health to election administration.
+        Yet most voters go to the polls knowing little about the candidates running for these offices.
+    </p>
+</div>
+
+<div class="detail-section">
+    <h3>Current Coverage</h3>
+    <p class="bio">Politibase currently covers the Fargo-Moorhead metro area:</p>
+    <ul style="margin:0.75rem 0 0 1.5rem;color:var(--gray-700);font-size:0.9rem">
+        <li><strong>Moorhead, MN</strong> &mdash; City Council (Mayor + 8 ward-based members)</li>
+        <li><strong>Fargo, ND</strong> &mdash; City Commission (Mayor + 4 at-large commissioners)</li>
+        <li><strong>Clay County, MN</strong> &mdash; Board of Commissioners (5 districts)</li>
+        <li><strong>Cass County, ND</strong> &mdash; Board of Commissioners (5 districts)</li>
+        <li><strong>Moorhead Area Public Schools (ISD 152)</strong> &mdash; School Board (7 at-large seats)</li>
+        <li><strong>Fargo Public Schools</strong> &mdash; Board of Education (9 at-large seats)</li>
+    </ul>
+</div>
+
+<div class="detail-section">
+    <h3>Data Sources</h3>
+    <p class="bio">All data comes from publicly available sources:</p>
+    <ul style="margin:0.75rem 0 0 1.5rem;color:var(--gray-700);font-size:0.9rem">
+        <li>Official city, county, and school district websites</li>
+        <li>County election offices (Clay County MN, Cass County ND)</li>
+        <li>Minnesota Secretary of State / North Dakota Secretary of State</li>
+        <li>Ballotpedia</li>
+        <li>Google Civic Information API</li>
+        <li>Local news (InForum, WDAY, Valley News Live)</li>
+    </ul>
+    <p class="bio" style="margin-top:0.75rem">
+        <strong>Important:</strong> Always verify information with your local election office before voting.
+        Politibase is a research tool, not an official election authority.
+    </p>
+</div>
+
+<div class="detail-section">
+    <h3>Open Source</h3>
+    <p class="bio">
+        Politibase is open source. Contributions are welcome &mdash; especially from civic hackers
+        who want to add coverage for their own community.
+    </p>
+    <p class="bio" style="margin-top:0.5rem">
+        <a href="https://github.com/mmagnusson/politibase">github.com/mmagnusson/politibase</a>
+    </p>
+</div>
+{% endblock %}
