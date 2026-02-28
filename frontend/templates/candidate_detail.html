@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% block title %}{{ candidate.full_name }}{% endblock %}
+
+{% block content %}
+<div class="candidate-header">
+    <div class="photo">{{ candidate.first_name[0] }}{{ candidate.last_name[0] }}</div>
+    <div class="info">
+        <h2>{{ candidate.full_name }}</h2>
+        <div class="meta">
+            {% if candidate.occupation %}{{ candidate.occupation }}{% endif %}
+            {% if candidate.residence_city %} &mdash; {{ candidate.residence_city }}{% if candidate.residence_state %}, {{ candidate.residence_state }}{% endif %}{% endif %}
+        </div>
+        {% if candidate.party_affiliation %}
+        <div class="meta">Party: {{ candidate.party_affiliation }}</div>
+        {% endif %}
+        {% if candidate.website %}
+        <div class="meta"><a href="{{ candidate.website }}" target="_blank">Campaign Website</a></div>
+        {% endif %}
+    </div>
+</div>
+
+{% if candidate.bio %}
+<div class="detail-section">
+    <h3>Biography</h3>
+    <p class="bio">{{ candidate.bio }}</p>
+</div>
+{% endif %}
+
+{% if candidate.education %}
+<div class="detail-section">
+    <h3>Education</h3>
+    <p class="bio">{{ candidate.education }}</p>
+</div>
+{% endif %}
+
+{% if candidate.candidacies %}
+<div class="detail-section">
+    <h3>Election History</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Election Date</th>
+                <th>Office</th>
+                <th>Type</th>
+                <th>Status</th>
+                <th>Incumbent</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for cy in candidate.candidacies %}
+            <tr>
+                <td>{{ cy.election_date }}</td>
+                <td>{{ cy.office_title }}</td>
+                <td>{{ cy.election_type }}</td>
+                <td><span class="badge badge-{{ cy.status }}">{{ cy.status }}</span></td>
+                <td>{{ 'Yes' if cy.is_incumbent else 'No' }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endif %}
+
+{% if candidate.positions %}
+<div class="detail-section">
+    <h3>Positions</h3>
+    {% for p in candidate.positions %}
+    <div style="margin-bottom:1rem">
+        <strong>{{ p.topic }}</strong>
+        <p class="bio">{{ p.stance }}</p>
+        {% if p.source_url %}<a href="{{ p.source_url }}" class="subtitle" target="_blank">Source</a>{% endif %}
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+{% if candidate.endorsements %}
+<div class="detail-section">
+    <h3>Endorsements</h3>
+    {% for e in candidate.endorsements %}
+    <div style="margin-bottom:0.5rem">
+        <strong>{{ e.endorser_name }}</strong>
+        {% if e.endorser_type %}<span class="subtitle">({{ e.endorser_type }})</span>{% endif %}
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<div style="margin-top:1rem">
+    <a href="/candidates">&larr; Back to all candidates</a>
+</div>
+{% endblock %}
