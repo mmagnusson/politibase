@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Jurisdictions{% endblock %}
+
+{% block content %}
+<div class="section-header">
+    <h2>Covered Jurisdictions</h2>
+</div>
+<p class="subtitle" style="margin-bottom:1rem">Politibase currently covers the Fargo-Moorhead metro area. Click a jurisdiction to see its offices and current officeholders.</p>
+
+<div class="card-grid">
+    {% for j in jurisdictions %}
+    <div class="card">
+        <h3>
+            <span class="badge badge-{{ j.type }}">{{ j.type | replace('_', ' ') }}</span>
+            <a href="/jurisdictions/{{ j.id }}">{{ j.name }}</a>
+        </h3>
+        <div class="subtitle">{{ j.state }}</div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

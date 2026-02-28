@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}Elections{% endblock %}
+
+{% block content %}
+<div class="section-header">
+    <h2>All Elections</h2>
+</div>
+
+{% if upcoming %}
+<h3 style="color:var(--blue-900);margin-bottom:0.75rem">Upcoming Elections</h3>
+<table>
+    <thead>
+        <tr>
+            <th>Date</th>
+            <th>Office</th>
+            <th>Type</th>
+            <th>Filing Deadline</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for e in upcoming %}
+        <tr>
+            <td>{{ e.election_date }}</td>
+            <td><a href="/elections/{{ e.id }}">{{ e.office_title }}</a></td>
+            <td>{{ e.election_type }}</td>
+            <td>{{ e.filing_deadline or '&mdash;' }}</td>
+            <td>{{ e.description or '' }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endif %}
+
+<h3 style="color:var(--blue-900);margin:1.5rem 0 0.75rem">Past Elections</h3>
+<table>
+    <thead>
+        <tr>
+            <th>Date</th>
+            <th>Office</th>
+            <th>Type</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for e in past %}
+        <tr>
+            <td>{{ e.election_date }}</td>
+            <td><a href="/elections/{{ e.id }}">{{ e.office_title }}</a></td>
+            <td>{{ e.election_type }}</td>
+            <td>{{ e.description or '' }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

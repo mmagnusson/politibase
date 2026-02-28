@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}{{ jurisdiction.name }}{% endblock %}
+
+{% block content %}
+<div class="section-header">
+    <h2>
+        <span class="badge badge-{{ jurisdiction.type }}">{{ jurisdiction.type | replace('_', ' ') }}</span>
+        {{ jurisdiction.name }}
+    </h2>
+</div>
+
+{% for office in jurisdiction.offices %}
+<div class="detail-section">
+    <h3>{{ office.title }}{% if office.district %} &mdash; {{ office.district }}{% endif %}</h3>
+    <div class="subtitle" style="margin-bottom:0.5rem">
+        {{ office.term_length_years }}-year term
+        {% if office.is_partisan %} &mdash; Partisan{% else %} &mdash; Nonpartisan{% endif %}
+    </div>
+
+    {% if office.current_holders %}
+    <div style="margin-top:0.5rem">
+        <strong>Current:</strong>
+        {% for h in office.current_holders %}
+        <a href="/candidate/{{ h.id }}">{{ h.name }}</a>{% if not loop.last %}, {% endif %}
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
+{% endfor %}
+
+<div style="margin-top:1rem">
+    <a href="/jurisdictions">&larr; Back to all jurisdictions</a>
+</div>
+{% endblock %}
