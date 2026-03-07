@@ -176,6 +176,11 @@ a:hover { text-decoration: underline; }
 .badge-city { background: #ebf8ff; color: #2b6cb0; }
 .badge-county { background: #fefcbf; color: #975a16; }
 .badge-school { background: #f0fff4; color: #276749; }
+.badge-school_district { background: #f0fff4; color: #276749; }
+.badge-judicial_district { background: #faf5ff; color: #553c9a; }
+.badge-judicial { background: #faf5ff; color: #553c9a; }
+.badge-conservation_district { background: #f0fff4; color: #22543d; }
+.badge-park_district { background: #ebf8ff; color: #2a4365; }
 .badge-incumbent { background: var(--green-100); color: var(--green-600); }
 .badge-winner { background: var(--green-100); color: var(--green-600); }
 .badge-filed { background: var(--yellow-100); color: var(--yellow-600); }
