@@ -82,7 +82,10 @@ function badgeClass(type) {
     switch (type) {
         case 'city': return 'badge-city';
         case 'county': return 'badge-county';
-        case 'school_district': return 'badge-school';
+        case 'school_district': return 'badge-school_district';
+        case 'judicial_district': return 'badge-judicial_district';
+        case 'conservation_district': return 'badge-conservation_district';
+        case 'park_district': return 'badge-park_district';
         default: return '';
     }
 }

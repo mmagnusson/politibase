@@ -16,6 +16,7 @@ router = APIRouter()
 # In production, this would use geocoding + district shapefiles
 _CITY_KEYWORDS = {
     "moorhead": "City of Moorhead",
+    "west fargo": "City of West Fargo",
     "fargo": "City of Fargo",
 }
 _COUNTY_KEYWORDS = {
@@ -31,6 +32,28 @@ _SCHOOL_KEYWORDS = {
     "moorhead": "Moorhead Area Public Schools (ISD 152)",
     "fargo": "Fargo Public Schools",
 }
+_JUDICIAL_KEYWORDS = {
+    "moorhead": "Minnesota 7th Judicial District",
+    "dilworth": "Minnesota 7th Judicial District",
+    "glyndon": "Minnesota 7th Judicial District",
+    "hawley": "Minnesota 7th Judicial District",
+    "fargo": "North Dakota East Central Judicial District",
+    "west fargo": "North Dakota East Central Judicial District",
+    "horace": "North Dakota East Central Judicial District",
+}
+_SWCD_KEYWORDS = {
+    "moorhead": "Clay County Soil & Water Conservation District",
+    "dilworth": "Clay County Soil & Water Conservation District",
+    "glyndon": "Clay County Soil & Water Conservation District",
+    "hawley": "Clay County Soil & Water Conservation District",
+    "fargo": "Cass County Soil Conservation District",
+    "west fargo": "Cass County Soil Conservation District",
+    "horace": "Cass County Soil Conservation District",
+}
+_PARK_KEYWORDS = {
+    "fargo": "Fargo Park District",
+    "west fargo": "West Fargo Park District",
+}
 
 
 def _resolve_jurisdictions(address: str, db: Session) -> list[dict]:
@@ -38,27 +61,33 @@ def _resolve_jurisdictions(address: str, db: Session) -> list[dict]:
 
     This is a simplified keyword-based matcher. A production system would use
     geocoding (lat/lng) + PostGIS district boundary queries.
+
+    Keywords are checked longest-first so "west fargo" matches before "fargo".
+    Within each keyword map, only the most specific match is used.
     """
     addr_lower = address.lower()
     matches = []
 
-    for keyword, jname in _CITY_KEYWORDS.items():
-        if keyword in addr_lower:
-            j = db.query(Jurisdiction).filter(Jurisdiction.name == jname).first()
-            if j:
-                matches.append(j)
+    all_maps = [
+        _CITY_KEYWORDS, _COUNTY_KEYWORDS, _SCHOOL_KEYWORDS,
+        _JUDICIAL_KEYWORDS, _SWCD_KEYWORDS, _PARK_KEYWORDS,
+    ]
 
-    for keyword, jname in _COUNTY_KEYWORDS.items():
-        if keyword in addr_lower:
-            j = db.query(Jurisdiction).filter(Jurisdiction.name == jname).first()
-            if j and j not in matches:
-                matches.append(j)
-
-    for keyword, jname in _SCHOOL_KEYWORDS.items():
-        if keyword in addr_lower:
-            j = db.query(Jurisdiction).filter(Jurisdiction.name == jname).first()
-            if j and j not in matches:
-                matches.append(j)
+    for kw_map in all_maps:
+        # Sort keywords longest-first so "west fargo" is tested before "fargo".
+        # Track which keywords have been "consumed" by a longer match so that
+        # e.g. matching "west fargo" prevents a second match on bare "fargo".
+        consumed_substrings = set()
+        for keyword in sorted(kw_map.keys(), key=len, reverse=True):
+            if keyword in addr_lower:
+                # Skip if a longer keyword already consumed this one
+                if any(keyword in longer for longer in consumed_substrings):
+                    continue
+                consumed_substrings.add(keyword)
+                jname = kw_map[keyword]
+                j = db.query(Jurisdiction).filter(Jurisdiction.name == jname).first()
+                if j and j not in matches:
+                    matches.append(j)
 
     return matches
 
