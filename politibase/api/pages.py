@@ -19,6 +19,7 @@ from politibase.models.schema import (
     Endorsement,
     Jurisdiction,
     Office,
+    OfficeTerm,
     Position,
 )
 
@@ -258,27 +259,21 @@ def jurisdiction_detail_page(
     offices = db.query(Office).filter(Office.jurisdiction_id == j.id).order_by(Office.title).all()
     office_data = []
     for o in offices:
-        # Find current holders (most recent winners)
-        current_holders = []
-        elections = (
-            db.query(Election)
-            .filter(Election.office_id == o.id)
-            .order_by(Election.election_date.desc())
+        terms = (
+            db.query(OfficeTerm)
+            .filter(OfficeTerm.office_id == o.id, OfficeTerm.status == "serving")
+            .join(Candidate)
             .all()
         )
-        for elec in elections:
-            winners = (
-                db.query(Candidacy)
-                .filter(Candidacy.election_id == elec.id, Candidacy.status == "winner")
-                .join(Candidate)
-                .all()
-            )
-            for w in winners:
-                current_holders.append(
-                    {"id": w.candidate.id, "name": w.candidate.full_name}
-                )
-            if current_holders:
-                break  # Only show most recent winners
+        current_holders = [
+            {
+                "id": t.candidate.id,
+                "name": t.candidate.full_name,
+                "is_term_limited": t.is_term_limited,
+                "term_end": t.term_end.isoformat() if t.term_end else None,
+            }
+            for t in terms
+        ]
 
         office_data.append(
             {

@@ -289,6 +289,34 @@ class MeetingRecord(Base):
 
 
 # ---------------------------------------------------------------------------
+# OfficeTerm — who currently holds (or recently held) an office
+# ---------------------------------------------------------------------------
+
+class OfficeTerm(Base):
+    __tablename__ = "office_terms"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    office_id = Column(Integer, ForeignKey("offices.id"), nullable=False)
+    candidate_id = Column(Integer, ForeignKey("candidates.id"), nullable=False)
+    term_start = Column(Date, nullable=True)
+    term_end = Column(Date, nullable=True)
+    is_term_limited = Column(Boolean, nullable=False, default=False)
+    appointment_type = Column(
+        String(32), nullable=False, default="elected"
+    )  # elected | appointed
+    status = Column(
+        String(32), nullable=False, default="serving"
+    )  # serving | resigned | recalled | term_expired
+
+    # Relationships
+    office = relationship("Office", backref="terms")
+    candidate = relationship("Candidate", backref="office_terms")
+
+    def __repr__(self):
+        return f"<OfficeTerm office={self.office_id} candidate={self.candidate_id} status={self.status}>"
+
+
+# ---------------------------------------------------------------------------
 # DataSource — provenance tracking for all imported data
 # ---------------------------------------------------------------------------
 

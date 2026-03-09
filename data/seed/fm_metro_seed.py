@@ -24,6 +24,7 @@ from politibase.models.schema import (
     Election,
     Jurisdiction,
     Office,
+    OfficeTerm,
 )
 
 
@@ -196,7 +197,11 @@ def seed():
     # ------------------------------------------------------------------
     # Helper to create candidate + candidacy in one go
     # ------------------------------------------------------------------
-    def add_incumbent(office, election, first, last, **kwargs):
+    def add_incumbent(
+        office, election, first, last,
+        is_term_limited=False, term_start=None, term_end=None,
+        **kwargs,
+    ):
         c = Candidate(
             first_name=first,
             last_name=last,
@@ -212,6 +217,16 @@ def seed():
             is_incumbent=True,
         )
         session.add(cy)
+        term = OfficeTerm(
+            office_id=office.id,
+            candidate_id=c.id,
+            term_start=term_start,
+            term_end=term_end,
+            is_term_limited=is_term_limited,
+            appointment_type="elected",
+            status="serving",
+        )
+        session.add(term)
         return c
 
     # ------------------------------------------------------------------
@@ -383,6 +398,8 @@ def seed():
         bio="Mayor of Fargo. Presides over the five-member City Commission.",
         occupation="Mayor",
         residence_city="Fargo",
+        is_term_limited=True,
+        term_end=date(2026, 6, 30),
     )
     add_incumbent(
         fgo_commissioners[0], fgo_2024,
@@ -627,6 +644,7 @@ def seed():
     print(f"  Elections:     {session.query(Election).count()}")
     print(f"  Candidates:    {session.query(Candidate).count()}")
     print(f"  Candidacies:   {session.query(Candidacy).count()}")
+    print(f"  Office Terms:  {session.query(OfficeTerm).count()}")
     print(f"  Data Sources:  {session.query(DataSource).count()}")
 
     session.close()

@@ -59,6 +59,7 @@ function renderBallotResults(data, container) {
                     <div class="subtitle">${office.title}${office.district ? ' — ' + office.district : ''}</div>
                     ${holder.occupation ? `<div class="bio">${holder.occupation}</div>` : ''}
                     <span class="badge badge-incumbent">Incumbent</span>
+                    ${holder.is_term_limited ? '<span class="badge" style="background:var(--yellow-100);color:var(--yellow-600)">Term Limited</span>' : ''}
                 </div>`;
             }
 

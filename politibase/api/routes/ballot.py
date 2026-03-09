@@ -7,7 +7,7 @@ from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 
 from politibase.db.database import get_db
-from politibase.models.schema import Candidate, Candidacy, Election, Jurisdiction, Office
+from politibase.models.schema import Candidate, Candidacy, Election, Jurisdiction, Office, OfficeTerm
 from politibase.scrapers.google_civic import lookup_representatives, lookup_elections
 
 router = APIRouter()
@@ -88,14 +88,6 @@ def ballot_lookup(
         }
 
         for office in offices:
-            # Find the most recent election / current incumbent for this office
-            elections = (
-                db.query(Election)
-                .filter(Election.office_id == office.id)
-                .order_by(Election.election_date.desc())
-                .all()
-            )
-
             office_data = {
                 "id": office.id,
                 "title": office.title,
@@ -105,35 +97,41 @@ def ballot_lookup(
                 "upcoming_elections": [],
             }
 
-            for election in elections:
-                candidacies = (
-                    db.query(Candidacy)
-                    .filter(Candidacy.election_id == election.id)
-                    .join(Candidate)
-                    .all()
+            # Current holders from OfficeTerm
+            terms = (
+                db.query(OfficeTerm)
+                .filter(OfficeTerm.office_id == office.id, OfficeTerm.status == "serving")
+                .join(Candidate)
+                .all()
+            )
+            for term in terms:
+                office_data["current_holders"].append(
+                    {
+                        "id": term.candidate.id,
+                        "name": term.candidate.full_name,
+                        "occupation": term.candidate.occupation,
+                        "is_term_limited": term.is_term_limited,
+                        "term_end": term.term_end.isoformat() if term.term_end else None,
+                    }
                 )
 
-                for cy in candidacies:
-                    if cy.status == "winner":
-                        office_data["current_holders"].append(
-                            {
-                                "id": cy.candidate.id,
-                                "name": cy.candidate.full_name,
-                                "occupation": cy.candidate.occupation,
-                                "is_incumbent": cy.is_incumbent,
-                            }
-                        )
-
-                if election.filing_deadline:
-                    office_data["upcoming_elections"].append(
-                        {
-                            "election_id": election.id,
-                            "date": election.election_date.isoformat(),
-                            "type": election.election_type,
-                            "filing_deadline": election.filing_deadline.isoformat(),
-                            "description": election.description,
-                        }
-                    )
+            # Upcoming elections
+            elections = (
+                db.query(Election)
+                .filter(Election.office_id == office.id, Election.filing_deadline.isnot(None))
+                .order_by(Election.election_date.desc())
+                .all()
+            )
+            for election in elections:
+                office_data["upcoming_elections"].append(
+                    {
+                        "election_id": election.id,
+                        "date": election.election_date.isoformat(),
+                        "type": election.election_type,
+                        "filing_deadline": election.filing_deadline.isoformat(),
+                        "description": election.description,
+                    }
+                )
 
             jurisdiction_data["offices"].append(office_data)
 

@@ -21,7 +21,7 @@
     <div style="margin-top:0.5rem">
         <strong>Current:</strong>
         {% for h in office.current_holders %}
-        <a href="/candidate/{{ h.id }}">{{ h.name }}</a>{% if not loop.last %}, {% endif %}
+        <a href="/candidate/{{ h.id }}">{{ h.name }}</a>{% if h.is_term_limited %} <span class="badge" style="background:var(--yellow-100);color:var(--yellow-600);font-size:0.7rem">Term Limited</span>{% endif %}{% if not loop.last %}, {% endif %}
         {% endfor %}
     </div>
     {% endif %}
